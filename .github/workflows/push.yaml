@@ -1,0 +1,21 @@
+name: Push to Paragon
+
+on:
+  push:
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch: 
+
+jobs:
+  push_to_paragon:
+    name: Push to Paragon
+    runs-on: ubuntu-latest
+      
+    steps:
+      - uses: actions/checkout@v4
+      - id: push
+        uses: useparagon/paragraph-push@v1
+        with:
+          paragonKey: ${{ secrets.PARAGON_CLI_KEY }}
+          paragonZeusUrl: ${{ secrets.ZEUS_URL }}
+          paragonDashboardUrl: ${{ secrets.DASHBOARD_URL }}
