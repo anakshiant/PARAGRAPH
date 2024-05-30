@@ -1,0 +1,65 @@
+{
+  "secrets": [],
+  "events": {},
+  "integrations": {
+    "slack": {
+      "id": "faa644c7-9f20-4a5c-89f7-d6d9d2e07bca",
+      "name": "slack",
+      "workflows": {
+        "7b4483bd-7103-462e-a4ba-8d4cf7b04d5b": {
+          "id": "7b4483bd-7103-462e-a4ba-8d4cf7b04d5b",
+          "name": "heyyo",
+          "steps": [
+            {
+              "id": "c885b674-fb78-4a03-9bab-bcf51cf79472",
+              "type": "TRIGGER/NONE",
+              "parameters": {},
+              "next": "14fea7ac-1080-44b3-a0b5-ee77af6bdbe4",
+              "_migrations": {
+                "name": "triggerStep"
+              },
+              "description": "description"
+            },
+            {
+              "id": "14fea7ac-1080-44b3-a0b5-ee77af6bdbe4",
+              "type": "ACTION/FUNCTION",
+              "parameters": {
+                "parameters": [],
+                "code": "function yourFunction(parameters, libraries) {\n                return 'hello world';\n            }",
+                "retryOnFailure": false
+              },
+              "next": null,
+              "_migrations": {
+                "name": "functionStepStep"
+              },
+              "description": "Function Step"
+            }
+          ]
+        }
+      },
+      "config": {
+        "values": {
+          "paragonLink": true,
+          "description": "A description for the integration's purpose.",
+          "overview": "A long-form description for the integration's purpose.",
+          "workflowMeta": {
+            "7b4483bd-7103-462e-a4ba-8d4cf7b04d5b": {
+              "id": "7b4483bd-7103-462e-a4ba-8d4cf7b04d5b",
+              "hidden": false,
+              "defaultEnabled": false,
+              "inputs": [],
+              "infoText": ""
+            }
+          },
+          "sharedMeta": {
+            "inputs": []
+          }
+        }
+      }
+    }
+  },
+  "projectId": "573f9ef3-5bfd-440b-a42f-a022567fdb00",
+  "persona": {
+    "meta": {}
+  }
+}
