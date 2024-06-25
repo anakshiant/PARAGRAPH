@@ -1,4 +1,8 @@
-import { UnselectedStep, Workflow } from '@useparagon/core';
+import {
+  FunctionStep,
+  IntegrationEnabledStep,
+  Workflow,
+} from '@useparagon/core';
 import { IContext } from '@useparagon/core/execution';
 import { IPersona } from '@useparagon/core/persona';
 import { ConditionalInput } from '@useparagon/core/steps/library/conditional';
@@ -6,16 +10,16 @@ import { IConnectUser, IPermissionContext } from '@useparagon/core/user';
 import {
   createInputs,
   InputResultMap,
-  ISlackIntegration,
-} from '@useparagon/integrations/slack';
+  IPipedriveIntegration,
+} from '@useparagon/integrations/pipedrive';
 
 import personaMeta from '../../../persona.meta';
 
 /**
- * New Workflow Workflow implementation
+ * pipedrive integration enabled Workflow implementation
  */
 export default class extends Workflow<
-  ISlackIntegration,
+  IPipedriveIntegration,
   IPersona<typeof personaMeta>,
   InputResultMap
 > {
@@ -23,25 +27,32 @@ export default class extends Workflow<
    * Define workflow steps and orchestration.
    */
   define(
-    integration: ISlackIntegration,
+    integration: IPipedriveIntegration,
     context: IContext<InputResultMap>,
     connectUser: IConnectUser<IPersona<typeof personaMeta>>,
   ) {
-    const triggerStep = new UnselectedStep();
+    const triggerStep = new IntegrationEnabledStep();
 
-    triggerStep;
+    const functionStep = new FunctionStep({
+      autoRetry: false,
+      description: 'description',
+      code: function yourFunction(parameters, libraries) {},
+      parameters: {},
+    });
+
+    triggerStep.nextStep(functionStep);
 
     /**
      * Pass all steps used in the workflow to the `.register()`
      * function. The keys used in this function must remain stable.
      */
-    return this.register({ triggerStep });
+    return this.register({ triggerStep, functionStep });
   }
 
   /**
    * The name of the workflow, used in the Dashboard and Connect Portal.
    */
-  name: string = 'New Workflow';
+  name: string = 'pipedrive integration enabled';
 
   /**
    * A user-facing description of the workflow shown in the Connect Portal.
@@ -83,5 +94,5 @@ export default class extends Workflow<
   /**
    * This property is maintained by Paragon. Do not edit this property.
    */
-  readonly id: string = '23010295-2175-4fad-abcc-0b75c06e5e08';
+  readonly id: string = 'c8655757-dfc3-41c3-aaf6-c95bce48a150';
 }

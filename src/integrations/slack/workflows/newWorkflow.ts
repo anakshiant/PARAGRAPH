@@ -8,9 +8,9 @@ import { IPersona } from '@useparagon/core/persona';
 import { ConditionalInput } from '@useparagon/core/steps/library/conditional';
 import { IConnectUser, IPermissionContext } from '@useparagon/core/user';
 import {
-  ISlackIntegration,
-  InputResultMap,
   createInputs,
+  InputResultMap,
+  ISlackIntegration,
 } from '@useparagon/integrations/slack';
 
 import personaMeta from '../../../persona.meta';
