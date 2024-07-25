@@ -1,5 +1,6 @@
 import { IIntegrationConfig } from '@useparagon/core/integration';
 
+import { default as NewWorkflow } from './workflows/newWorkflow';
 import { default as PipedriveIntegrationEnabled } from './workflows/pipedriveIntegrationEnabled';
 
 /**
@@ -15,7 +16,7 @@ Our Pipedrive integration enables you to:
 • Sync records from Pipedrive
 • Receive updates when new records are created in Pipedrive`,
   showWatermark: true,
-  workflowDisplayOrder: [PipedriveIntegrationEnabled],
+  workflowDisplayOrder: [NewWorkflow, PipedriveIntegrationEnabled],
 };
 
 export default config;
