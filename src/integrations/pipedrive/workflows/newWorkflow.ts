@@ -1,5 +1,12 @@
-import { CronStep, RequestStep, Workflow } from '@useparagon/core';
+import {
+  ConditionalStep,
+  CronStep,
+  FunctionStep,
+  RequestStep,
+  Workflow,
+} from '@useparagon/core';
 import { IContext } from '@useparagon/core/execution';
+import * as Operators from '@useparagon/core/operator';
 import { IPersona } from '@useparagon/core/persona';
 import { ConditionalInput } from '@useparagon/core/steps/library/conditional';
 import { IConnectUser, IPermissionContext } from '@useparagon/core/user';
@@ -32,6 +39,15 @@ export default class extends Workflow<
       timeZone: 'America/Los_Angeles',
     });
 
+    const functionStep = new FunctionStep({
+      autoRetry: false,
+      description: 'description',
+      code: function yourFunction(parameters, libraries, request) {
+        return 'name';
+      },
+      parameters: {},
+    });
+
     const requestStep = new RequestStep({
       autoRetry: false,
       continueWorkflowOnError: false,
@@ -42,13 +58,29 @@ export default class extends Workflow<
       headers: {},
     });
 
-    triggerStep.nextStep(requestStep);
+    const ifelseStep = new ConditionalStep({
+      if: Operators.DateTimeAfter(
+        functionStep.output.result,
+        '2000-12-31T18:30:00.000Z',
+      ),
+      description: 'description',
+    });
+
+    triggerStep
+      .nextStep(functionStep)
+      .nextStep(requestStep)
+      .nextStep(ifelseStep);
 
     /**
      * Pass all steps used in the workflow to the `.register()`
      * function. The keys used in this function must remain stable.
      */
-    return this.register({ triggerStep, requestStep });
+    return this.register({
+      triggerStep,
+      functionStep,
+      requestStep,
+      ifelseStep,
+    });
   }
 
   /**
