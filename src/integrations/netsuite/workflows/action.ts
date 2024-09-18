@@ -49,7 +49,18 @@ export default class extends Workflow<
       iterator: functionStep.output.result,
     });
 
-    const actionStep = undefined;
+    const actionStep = integration.actions.getVendorById(
+      {
+        vendorFilterFormula: undefined,
+        recordType: 'vendor',
+        vendorId: `5524`,
+      },
+      {
+        autoRetry: false,
+        continueWorkflowOnError: false,
+        description: 'description',
+      },
+    );
 
     triggerStep.nextStep(functionStep).nextStep(mapStep.branch(actionStep));
 

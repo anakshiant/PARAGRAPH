@@ -19,7 +19,7 @@ import event from '../../../events/net';
 import personaMeta from '../../../persona.meta';
 
 /**
- * New Workflow Workflow implementation
+ * integration request Workflow implementation
  */
 export default class extends Workflow<
   INetsuiteIntegration,
@@ -55,7 +55,7 @@ export default class extends Workflow<
       continueWorkflowOnError: false,
       description: 'description',
       method: 'GET',
-      url: `/contact`,
+      url: `/contact/5513`,
       params: { ['']: '' },
       headers: {},
     });
@@ -79,7 +79,7 @@ export default class extends Workflow<
   /**
    * The name of the workflow, used in the Dashboard and Connect Portal.
    */
-  name: string = 'New Workflow';
+  name: string = 'integration request';
 
   /**
    * A user-facing description of the workflow shown in the Connect Portal.

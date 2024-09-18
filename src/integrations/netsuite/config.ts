@@ -1,7 +1,7 @@
 import { IIntegrationConfig } from '@useparagon/core/integration';
 
 import { default as Action } from './workflows/action';
-import { default as NewWorkflow } from './workflows/newWorkflow';
+import { default as IntegrationRequest } from './workflows/integrationRequest';
 
 /**
  * configuration for a netsuite
@@ -15,7 +15,7 @@ Our NetSuite integration enables you to:
 • Create or update purchase orders in NetSuite automatically
 • Sync vendor information between your app and NetSuite`,
   showWatermark: true,
-  workflowDisplayOrder: [Action, NewWorkflow],
+  workflowDisplayOrder: [Action, IntegrationRequest],
 };
 
 export default config;
