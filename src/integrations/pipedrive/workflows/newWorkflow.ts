@@ -60,7 +60,7 @@ export default class extends Workflow<
 
     const ifelseStep = new ConditionalStep({
       if: Operators.DateTimeAfter(
-        functionStep.output.result,
+        '2024-08-23T07:23:02.451Z',
         '2000-12-31T18:30:00.000Z',
       ),
       description: 'description',
