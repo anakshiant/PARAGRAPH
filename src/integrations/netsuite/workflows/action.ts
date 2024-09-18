@@ -2,7 +2,6 @@ import {
   EventStep,
   FanOutStep,
   FunctionStep,
-  IntegrationRequestStep,
   Workflow,
 } from '@useparagon/core';
 import { IContext } from '@useparagon/core/execution';
@@ -19,7 +18,7 @@ import event from '../../../events/net';
 import personaMeta from '../../../persona.meta';
 
 /**
- * New Workflow Workflow implementation
+ * action Workflow implementation
  */
 export default class extends Workflow<
   INetsuiteIntegration,
@@ -50,36 +49,21 @@ export default class extends Workflow<
       iterator: functionStep.output.result,
     });
 
-    const integrationRequestStep = new IntegrationRequestStep({
-      autoRetry: false,
-      continueWorkflowOnError: false,
-      description: 'description',
-      method: 'GET',
-      url: `/contact`,
-      params: { ['']: '' },
-      headers: {},
-    });
+    const actionStep = undefined;
 
-    triggerStep
-      .nextStep(functionStep)
-      .nextStep(mapStep.branch(integrationRequestStep));
+    triggerStep.nextStep(functionStep).nextStep(mapStep.branch(actionStep));
 
     /**
      * Pass all steps used in the workflow to the `.register()`
      * function. The keys used in this function must remain stable.
      */
-    return this.register({
-      triggerStep,
-      functionStep,
-      mapStep,
-      integrationRequestStep,
-    });
+    return this.register({ triggerStep, functionStep, mapStep, actionStep });
   }
 
   /**
    * The name of the workflow, used in the Dashboard and Connect Portal.
    */
-  name: string = 'New Workflow';
+  name: string = 'action';
 
   /**
    * A user-facing description of the workflow shown in the Connect Portal.
@@ -121,5 +105,5 @@ export default class extends Workflow<
   /**
    * This property is maintained by Paragon. Do not edit this property.
    */
-  readonly id: string = '9f6a67b0-ec43-487e-bb7e-ba1b56384bd8';
+  readonly id: string = '9226b77e-6727-4402-93bf-873bd05ca1e9';
 }
