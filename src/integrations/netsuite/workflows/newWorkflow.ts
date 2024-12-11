@@ -5,6 +5,7 @@ import {
   Workflow,
 } from '@useparagon/core';
 import { IContext } from '@useparagon/core/execution';
+import * as Operators from '@useparagon/core/operator';
 import { IPersona } from '@useparagon/core/persona';
 import { ConditionalInput } from '@useparagon/core/steps/library/conditional';
 import { IConnectUser, IPermissionContext } from '@useparagon/core/user';
@@ -47,7 +48,7 @@ export default class extends Workflow<
     });
 
     const inboundStep = new ConditionalStep({
-      if: undefined,
+      if: Operators.BooleanFalse(functionStep.output.result),
       description: 'inbound?',
     });
 
@@ -70,17 +71,42 @@ export default class extends Workflow<
       parameters: {},
     });
 
+    const functionStep3 = new FunctionStep({
+      autoRetry: false,
+      description: 'description',
+      code: function yourFunction(parameters, libraries) {},
+      parameters: {},
+    });
+
     const ifelseStep1 = new ConditionalStep({
       if: undefined,
       description: 'is private note?',
+    });
+
+    const functionStep4 = new FunctionStep({
+      autoRetry: false,
+      description: 'description',
+      code: function yourFunction(parameters, libraries) {
+        return true;
+      },
+      parameters: {},
+    });
+
+    const ifelseStep2 = new ConditionalStep({
+      if: undefined,
+      description: 'description',
     });
 
     triggerStep
       .nextStep(functionStep)
       .nextStep(
         inboundStep
-          .whenTrue(functionStep1.nextStep(ifelseStep.whenFalse(functionStep2)))
-          .whenFalse(ifelseStep1),
+          .whenTrue(
+            functionStep1
+              .nextStep(ifelseStep.whenFalse(functionStep2))
+              .nextStep(functionStep3),
+          )
+          .whenFalse(ifelseStep1.whenTrue(functionStep4.nextStep(ifelseStep2))),
       );
 
     /**
@@ -94,7 +120,10 @@ export default class extends Workflow<
       functionStep1,
       ifelseStep,
       functionStep2,
+      functionStep3,
       ifelseStep1,
+      functionStep4,
+      ifelseStep2,
     });
   }
 
