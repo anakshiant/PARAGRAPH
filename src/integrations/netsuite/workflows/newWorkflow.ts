@@ -60,12 +60,28 @@ export default class extends Workflow<
 
     const ifelseStep = new ConditionalStep({
       if: undefined,
+      description: 'is customer language set?',
+    });
+
+    const functionStep2 = new FunctionStep({
+      autoRetry: false,
       description: 'description',
+      code: function yourFunction(parameters, libraries) {},
+      parameters: {},
+    });
+
+    const ifelseStep1 = new ConditionalStep({
+      if: undefined,
+      description: 'is private note?',
     });
 
     triggerStep
       .nextStep(functionStep)
-      .nextStep(inboundStep.whenTrue(functionStep1).whenFalse(ifelseStep));
+      .nextStep(
+        inboundStep
+          .whenTrue(functionStep1.nextStep(ifelseStep.whenFalse(functionStep2)))
+          .whenFalse(ifelseStep1),
+      );
 
     /**
      * Pass all steps used in the workflow to the `.register()`
@@ -77,6 +93,8 @@ export default class extends Workflow<
       inboundStep,
       functionStep1,
       ifelseStep,
+      functionStep2,
+      ifelseStep1,
     });
   }
 
