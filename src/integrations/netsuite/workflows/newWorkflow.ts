@@ -60,13 +60,13 @@ export default class extends Workflow<
     });
 
     const ifelseStep = new ConditionalStep({
-      if: undefined,
+      if: Operators.BooleanTrue(functionStep.output.result),
       description: 'is customer language set?',
     });
 
     const functionStep2 = new FunctionStep({
       autoRetry: false,
-      description: 'description',
+      description: 'customer language no',
       code: function yourFunction(parameters, libraries) {},
       parameters: {},
     });
@@ -79,7 +79,7 @@ export default class extends Workflow<
     });
 
     const ifelseStep1 = new ConditionalStep({
-      if: undefined,
+      if: Operators.BooleanTrue(functionStep.output.result),
       description: 'is private note?',
     });
 
@@ -93,8 +93,22 @@ export default class extends Workflow<
     });
 
     const ifelseStep2 = new ConditionalStep({
-      if: undefined,
+      if: Operators.BooleanTrue(functionStep4.output.result),
       description: 'description',
+    });
+
+    const functionStep5 = new FunctionStep({
+      autoRetry: false,
+      description: 'description',
+      code: function yourFunction(parameters, libraries) {},
+      parameters: {},
+    });
+
+    const functionStep6 = new FunctionStep({
+      autoRetry: false,
+      description: 'description',
+      code: function yourFunction(parameters, libraries) {},
+      parameters: {},
     });
 
     triggerStep
@@ -106,7 +120,13 @@ export default class extends Workflow<
               .nextStep(ifelseStep.whenFalse(functionStep2))
               .nextStep(functionStep3),
           )
-          .whenFalse(ifelseStep1.whenTrue(functionStep4.nextStep(ifelseStep2))),
+          .whenFalse(
+            ifelseStep1.whenTrue(
+              functionStep4.nextStep(
+                ifelseStep2.whenTrue(functionStep5).whenFalse(functionStep6),
+              ),
+            ),
+          ),
       );
 
     /**
@@ -124,6 +144,8 @@ export default class extends Workflow<
       ifelseStep1,
       functionStep4,
       ifelseStep2,
+      functionStep5,
+      functionStep6,
     });
   }
 
