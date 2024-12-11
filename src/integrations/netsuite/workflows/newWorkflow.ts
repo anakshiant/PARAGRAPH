@@ -1,13 +1,13 @@
-import { UnselectedStep, Workflow } from '@useparagon/core';
+import { CronStep, FunctionStep, Workflow } from '@useparagon/core';
 import { IContext } from '@useparagon/core/execution';
 import { IPersona } from '@useparagon/core/persona';
 import { ConditionalInput } from '@useparagon/core/steps/library/conditional';
 import { IConnectUser, IPermissionContext } from '@useparagon/core/user';
 import {
   createInputs,
+  INetsuiteIntegration,
   InputResultMap,
-  ISlackIntegration,
-} from '@useparagon/integrations/slack';
+} from '@useparagon/integrations/netsuite';
 
 import personaMeta from '../../../persona.meta';
 
@@ -15,7 +15,7 @@ import personaMeta from '../../../persona.meta';
  * New Workflow Workflow implementation
  */
 export default class extends Workflow<
-  ISlackIntegration,
+  INetsuiteIntegration,
   IPersona<typeof personaMeta>,
   InputResultMap
 > {
@@ -23,19 +23,31 @@ export default class extends Workflow<
    * Define workflow steps and orchestration.
    */
   define(
-    integration: ISlackIntegration,
+    integration: INetsuiteIntegration,
     context: IContext<InputResultMap>,
     connectUser: IConnectUser<IPersona<typeof personaMeta>>,
   ) {
-    const triggerStep = new UnselectedStep();
+    const triggerStep = new CronStep({
+      cron: '0 0 9 */1 * *',
+      timeZone: 'America/Los_Angeles',
+    });
 
-    triggerStep;
+    const functionStep = new FunctionStep({
+      autoRetry: false,
+      description: 'description',
+      code: function yourFunction(parameters, libraries) {
+        return true;
+      },
+      parameters: {},
+    });
+
+    triggerStep.nextStep(functionStep);
 
     /**
      * Pass all steps used in the workflow to the `.register()`
      * function. The keys used in this function must remain stable.
      */
-    return this.register({ triggerStep });
+    return this.register({ triggerStep, functionStep });
   }
 
   /**
@@ -83,5 +95,5 @@ export default class extends Workflow<
   /**
    * This property is maintained by Paragon. Do not edit this property.
    */
-  readonly id: string = '23010295-2175-4fad-abcc-0b75c06e5e08';
+  readonly id: string = '858e60c2-39d2-40f4-8e80-d4697d6c27ac';
 }
