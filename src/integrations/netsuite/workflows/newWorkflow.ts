@@ -1,4 +1,9 @@
-import { CronStep, FunctionStep, Workflow } from '@useparagon/core';
+import {
+  ConditionalStep,
+  CronStep,
+  FunctionStep,
+  Workflow,
+} from '@useparagon/core';
 import { IContext } from '@useparagon/core/execution';
 import { IPersona } from '@useparagon/core/persona';
 import { ConditionalInput } from '@useparagon/core/steps/library/conditional';
@@ -41,13 +46,38 @@ export default class extends Workflow<
       parameters: {},
     });
 
-    triggerStep.nextStep(functionStep);
+    const inboundStep = new ConditionalStep({
+      if: undefined,
+      description: 'inbound?',
+    });
+
+    const functionStep1 = new FunctionStep({
+      autoRetry: false,
+      description: 'parse inbound webhook',
+      code: function yourFunction(parameters, libraries) {},
+      parameters: {},
+    });
+
+    const ifelseStep = new ConditionalStep({
+      if: undefined,
+      description: 'description',
+    });
+
+    triggerStep
+      .nextStep(functionStep)
+      .nextStep(inboundStep.whenTrue(functionStep1).whenFalse(ifelseStep));
 
     /**
      * Pass all steps used in the workflow to the `.register()`
      * function. The keys used in this function must remain stable.
      */
-    return this.register({ triggerStep, functionStep });
+    return this.register({
+      triggerStep,
+      functionStep,
+      inboundStep,
+      functionStep1,
+      ifelseStep,
+    });
   }
 
   /**
