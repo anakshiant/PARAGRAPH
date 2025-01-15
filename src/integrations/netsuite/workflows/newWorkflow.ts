@@ -73,7 +73,7 @@ export default class extends Workflow<
 
     const functionStep3 = new FunctionStep({
       autoRetry: false,
-      description: 'description',
+      description: 'customer language resolving',
       code: function yourFunction(parameters, libraries) {},
       parameters: {},
     });
@@ -85,7 +85,7 @@ export default class extends Workflow<
 
     const functionStep4 = new FunctionStep({
       autoRetry: false,
-      description: 'description',
+      description: 'private note yes',
       code: function yourFunction(parameters, libraries) {
         return true;
       },
@@ -94,19 +94,19 @@ export default class extends Workflow<
 
     const ifelseStep2 = new ConditionalStep({
       if: Operators.BooleanTrue(functionStep4.output.result),
-      description: 'description',
+      description: 'privagte note conditional',
     });
 
     const functionStep5 = new FunctionStep({
       autoRetry: false,
-      description: 'description',
+      description: 'private condition yes',
       code: function yourFunction(parameters, libraries) {},
       parameters: {},
     });
 
     const functionStep6 = new FunctionStep({
       autoRetry: false,
-      description: 'description',
+      description: 'private conditional no',
       code: function yourFunction(parameters, libraries) {},
       parameters: {},
     });

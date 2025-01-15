@@ -1,5 +1,7 @@
 import { IIntegrationConfig } from '@useparagon/core/integration';
 
+import { default as NewWorkflow } from './workflows/newWorkflow';
+
 /**
  * configuration for a amazons3
  */
@@ -12,7 +14,7 @@ Our Amazon S3 integration enables you to:
 • Sync buckets in your Amazon S3 account 
 • Create and update buckets, objects and jobs in your Amazon S3 account`,
   showWatermark: true,
-  workflowDisplayOrder: [],
+  workflowDisplayOrder: [NewWorkflow],
 };
 
 export default config;
