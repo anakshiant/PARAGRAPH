@@ -1,5 +1,7 @@
 import { IIntegrationConfig } from '@useparagon/core/integration';
 
+import { default as NewWorkflow } from './workflows/newWorkflow';
+
 /**
  * configuration for a klaviyo
  */
@@ -15,7 +17,7 @@ Our Klaviyo integration enables you to:
 • Create or manage lists or campaigns in Klaviyo
 • Sync subscribers from Klaviyo lists`,
   showWatermark: true,
-  workflowDisplayOrder: [],
+  workflowDisplayOrder: [NewWorkflow],
 };
 
 export default config;
