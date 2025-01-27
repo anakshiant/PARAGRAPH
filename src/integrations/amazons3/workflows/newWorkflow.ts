@@ -33,7 +33,7 @@ export default class extends Workflow<
     });
 
     const actionStep = integration.actions.amazonS3ListFiles(
-      { bucketName: `` },
+      { bucketName: `sample.dev.theluxurycloset.com` },
       {
         autoRetry: false,
         continueWorkflowOnError: false,
