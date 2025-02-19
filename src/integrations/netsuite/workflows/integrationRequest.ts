@@ -55,9 +55,9 @@ export default class extends Workflow<
       continueWorkflowOnError: false,
       description: 'description',
       method: 'GET',
-      url: `/contact/5513`,
-      params: { ['']: '' },
-      headers: {},
+      url: `/contact/5513?=`,
+      params: { [``]: `` },
+      headers: { value: `` },
     });
 
     triggerStep
