@@ -1,4 +1,10 @@
-import { EndpointStep, ResponseStep, Workflow } from '@useparagon/core';
+import {
+  EndpointStep,
+  FanOutStep,
+  FunctionStep,
+  RequestStep,
+  Workflow,
+} from '@useparagon/core';
 import { IContext } from '@useparagon/core/execution';
 import { IPersona } from '@useparagon/core/persona';
 import { ConditionalInput } from '@useparagon/core/steps/library/conditional';
@@ -34,20 +40,44 @@ export default class extends Workflow<
       bodyValidations: [] as const,
     });
 
-    const responseStep = new ResponseStep({
+    const functionStep = new FunctionStep({
+      autoRetry: false,
       description: 'description',
-      statusCode: 200,
-      responseType: 'JSON',
-      body: {},
+      code: function yourFunction(parameters, libraries) {
+        return Array.from({ length: 10 }, (_, i) => ({
+          id: i + 1,
+          date: new Date(),
+          value: `Item ${i + 1}`,
+        }));
+      },
+      parameters: {},
     });
 
-    triggerStep.nextStep(responseStep);
+    const mapStep = new FanOutStep({
+      description: 'description',
+      iterator: functionStep.output.result,
+    });
+
+    const requestStep = new RequestStep({
+      autoRetry: false,
+      continueWorkflowOnError: false,
+      description: 'description',
+      url: `https://example.com?date=${functionStep.output.result['0'].date}&date2=${functionStep.output.result['2'].date}`,
+      method: 'GET',
+      params: {
+        [`date`]: `${functionStep.output.result['0'].date}`,
+        [`date2`]: `${functionStep.output.result['2'].date}`,
+      },
+      headers: {},
+    });
+
+    triggerStep.nextStep(functionStep).nextStep(mapStep.branch(requestStep));
 
     /**
      * Pass all steps used in the workflow to the `.register()`
      * function. The keys used in this function must remain stable.
      */
-    return this.register({ triggerStep, responseStep });
+    return this.register({ triggerStep, functionStep, mapStep, requestStep });
   }
 
   /**
