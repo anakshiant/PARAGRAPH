@@ -1,6 +1,5 @@
 import {
-  EndpointStep,
-  FanOutStep,
+  EventStep,
   FunctionStep,
   RequestStep,
   Workflow,
@@ -33,51 +32,32 @@ export default class extends Workflow<
     context: IContext<InputResultMap>,
     connectUser: IConnectUser<IPersona<typeof personaMeta>>,
   ) {
-    const triggerStep = new EndpointStep({
-      allowArbitraryPayload: false,
-      paramValidations: [] as const,
-      headerValidations: [] as const,
-      bodyValidations: [] as const,
-    });
+    const triggerStep = new EventStep(undefined);
 
     const functionStep = new FunctionStep({
       autoRetry: false,
       description: 'description',
-      code: function yourFunction(parameters, libraries) {
-        return Array.from({ length: 10 }, (_, i) => ({
-          id: i + 1,
-          date: new Date(),
-          value: `Item ${i + 1}`,
-        }));
-      },
+      code: function yourFunction(parameters, libraries) {},
       parameters: {},
-    });
-
-    const mapStep = new FanOutStep({
-      description: 'description',
-      iterator: functionStep.output.result,
     });
 
     const requestStep = new RequestStep({
       autoRetry: false,
       continueWorkflowOnError: false,
       description: 'description',
-      url: `https://example.com?date=${functionStep.output.result['0'].date}&date2=${functionStep.output.result['2'].date}`,
+      url: `https://example.com`,
       method: 'GET',
-      params: {
-        [`date`]: `${functionStep.output.result['0'].date}`,
-        [`date2`]: `${functionStep.output.result['2'].date}`,
-      },
+      params: { ['']: '' },
       headers: {},
     });
 
-    triggerStep.nextStep(functionStep).nextStep(mapStep.branch(requestStep));
+    triggerStep.nextStep(functionStep).nextStep(requestStep);
 
     /**
      * Pass all steps used in the workflow to the `.register()`
      * function. The keys used in this function must remain stable.
      */
-    return this.register({ triggerStep, functionStep, mapStep, requestStep });
+    return this.register({ triggerStep, functionStep, requestStep });
   }
 
   /**
@@ -125,5 +105,5 @@ export default class extends Workflow<
   /**
    * This property is maintained by Paragon. Do not edit this property.
    */
-  readonly id: string = '7b253fd9-db76-4a91-9964-60547b5849d9';
+  readonly id: string = '82cab444-c2dc-482b-b2b3-53740608d4b8';
 }

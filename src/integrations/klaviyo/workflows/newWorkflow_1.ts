@@ -1,13 +1,19 @@
-import { UnselectedStep, Workflow } from '@useparagon/core';
+import {
+  EndpointStep,
+  FanOutStep,
+  FunctionStep,
+  RequestStep,
+  Workflow,
+} from '@useparagon/core';
 import { IContext } from '@useparagon/core/execution';
 import { IPersona } from '@useparagon/core/persona';
 import { ConditionalInput } from '@useparagon/core/steps/library/conditional';
 import { IConnectUser, IPermissionContext } from '@useparagon/core/user';
 import {
   createInputs,
+  IKlaviyoIntegration,
   InputResultMap,
-  ISlackIntegration,
-} from '@useparagon/integrations/slack';
+} from '@useparagon/integrations/klaviyo';
 
 import personaMeta from '../../../persona.meta';
 
@@ -15,7 +21,7 @@ import personaMeta from '../../../persona.meta';
  * New Workflow Workflow implementation
  */
 export default class extends Workflow<
-  ISlackIntegration,
+  IKlaviyoIntegration,
   IPersona<typeof personaMeta>,
   InputResultMap
 > {
@@ -23,19 +29,55 @@ export default class extends Workflow<
    * Define workflow steps and orchestration.
    */
   define(
-    integration: ISlackIntegration,
+    integration: IKlaviyoIntegration,
     context: IContext<InputResultMap>,
     connectUser: IConnectUser<IPersona<typeof personaMeta>>,
   ) {
-    const triggerStep = new UnselectedStep();
+    const triggerStep = new EndpointStep({
+      allowArbitraryPayload: false,
+      paramValidations: [] as const,
+      headerValidations: [] as const,
+      bodyValidations: [] as const,
+    });
 
-    triggerStep;
+    const functionStep = new FunctionStep({
+      autoRetry: false,
+      description: 'description',
+      code: function yourFunction(parameters, libraries) {
+        return Array.from({ length: 10 }, (_, i) => ({
+          id: i + 1,
+          date: new Date(),
+          value: `Item ${i + 1}`,
+        }));
+      },
+      parameters: {},
+    });
+
+    const mapStep = new FanOutStep({
+      description: 'description',
+      iterator: functionStep.output.result,
+    });
+
+    const requestStep = new RequestStep({
+      autoRetry: false,
+      continueWorkflowOnError: false,
+      description: 'description',
+      url: `https://example.com?date=${functionStep.output.result['0'].date}&date2=${functionStep.output.result['2'].date}`,
+      method: 'GET',
+      params: {
+        [`date`]: `${functionStep.output.result['0'].date}`,
+        [`date2`]: `${functionStep.output.result['2'].date}`,
+      },
+      headers: {},
+    });
+
+    triggerStep.nextStep(functionStep).nextStep(mapStep.branch(requestStep));
 
     /**
      * Pass all steps used in the workflow to the `.register()`
      * function. The keys used in this function must remain stable.
      */
-    return this.register({ triggerStep });
+    return this.register({ triggerStep, functionStep, mapStep, requestStep });
   }
 
   /**
@@ -83,5 +125,5 @@ export default class extends Workflow<
   /**
    * This property is maintained by Paragon. Do not edit this property.
    */
-  readonly id: string = '23010295-2175-4fad-abcc-0b75c06e5e08';
+  readonly id: string = '7b253fd9-db76-4a91-9964-60547b5849d9';
 }
