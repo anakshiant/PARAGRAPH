@@ -14,6 +14,7 @@ import {
   InputResultMap,
 } from '@useparagon/integrations/klaviyo';
 
+import event from '../../../events/net';
 import personaMeta from '../../../persona.meta';
 
 /**
@@ -32,7 +33,7 @@ export default class extends Workflow<
     context: IContext<InputResultMap>,
     connectUser: IConnectUser<IPersona<typeof personaMeta>>,
   ) {
-    const triggerStep = new EventStep(undefined);
+    const triggerStep = new EventStep(event);
 
     const functionStep = new FunctionStep({
       autoRetry: false,
